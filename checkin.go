@@ -1,15 +1,15 @@
 package goiqiyi
 
 import (
-	"fmt"
-	"io/ioutil"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
 )
 
 // Query gets current status of the user specified by p00001
-func Query(p00001 string) {
+// and stores the value into target.
+func Query(p00001 string, target interface{}) {
 	req, err := http.NewRequest("GET", "https://serv.vip.iqiyi.com/vipgrowth/query.action", nil)
 	if err != nil {
 		log.Println(err)
@@ -29,12 +29,9 @@ func Query(p00001 string) {
 
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	err = json.NewDecoder(resp.Body).Decode(target)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
-
-	fmt.Println(string(data))
-
 }
